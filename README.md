@@ -1,6 +1,6 @@
 # AstroEBSD (modified)
 
-Made it possible to read arbitrary HDF5 files with diffraction patterns. In my case, I have a file from (HyperSpy)[https://github.com/hyperspy/hyperspy] with shape (x grid, y grid, x pattern, y pattern), e.g. (100, 100, 120, 120) if I have 100 x 100 patterns of 120 x 120 px.
+Made it possible to read arbitrary HDF5 files with diffraction patterns. In my case, I have a file from [HyperSpy](https://github.com/hyperspy/hyperspy) with shape (x grid, y grid, x pattern, y pattern), e.g. (100, 100, 120, 120) if I have 100 x 100 patterns of 120 x 120 px.
 
 ## New files
 
@@ -42,10 +42,10 @@ Included `InputUser` structure in input, since `bReadEBSP` now needs it (see bel
 
 Added necessary inputs to `bReadEBSP` (see below).
 
-### gen/bReadEBSP.m
+#### gen/bReadEBSP.m
 
 Added functionality for reading patterns from an HDF5 file of shape as mentioned above (from HyperSpy). The script then needs to check the mode (needs `InputUser` structure) and the get the pattern's location in the grid (needs `Data_InputMap`). Because of this, I have had to send these in wherever this function is called.
 
-### start_AstroEBSD.m
+#### start_AstroEBSD.m
 
 Matlab now checks which OS you are running and builds paths accordingly.
