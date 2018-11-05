@@ -1,49 +1,44 @@
 # AstroEBSD (modified)
----
 
 Made it possible to read arbitrary HDF5 files with diffraction patterns. In my case, I have a file from (HyperSpy)[https://github.com/hyperspy/hyperspy] with shape (x grid, y grid, x pattern, y pattern), e.g. (100, 100, 120, 120) if I have 100 x 100 patterns of 120 x 120 px.
 
 ## New files
----
 
-### decks/Input_Deck_HDF5.m
+#### decks/Input_Deck_HDF5.m
 
 Added new input user mode (hdf5).
 
-### gen/nReadHDF5.m
+#### gen/nReadHDF5.m
 
 Same purpose as `gen/bReadHDF5`, only no `MapData` are read from the HDF5 file and `MicroscopeData` are read from a plain text file. Assumes the HDF5 file is exported from HyperSpy.
 
-### gen/readSettings.m
+#### gen/readSettings.m
 
 Read microscope and pattern acquisition settings from plain text file, written to the `MicroscopeData` structure.
 
-### phases/Aluminium.pha
+#### phases/Aluminium.pha
 
 Changed name and lattice constants in `Austenite.pha`, otherwise used same values (is this correct?).
 
 ## Modified files
----
 
-### bin/Astro_EBSPset.m
+#### bin/Astro_EBSPset.m
 
 Uncommented line 338 (`uiwait(f,300)`), so that the radon transform etc. waits for my inputs before executing.
 
-### bin/Astro_Plot.m
+#### bin/Astro_Plot.m
 
 Set the CRange for the MAE plot to take upper value as the one set by the user in `Settings_PlotFilters.MAE_Thresh`.
 
-### bin/Astro_Run.m
+#### bin/Astro_Run.m
 
-Multiple changes:
-* Added mode `hdf5` as a 5th mode. Similar to 'Map_All', but functions for reading data from file are different.
-*
+Added mode `hdf5` as a 5th mode. Similar to 'Map_All', but functions for reading data from file are different. No static background subtraction is performed either.
 
-### bin/EBSP_StaticBG.m
+#### bin/EBSP_StaticBG.m
 
 Included `InputUser` structure in input, since `bReadEBSP` now needs it (see below).
 
-### bin/Map_Radon.m
+#### bin/Map_Radon.m
 
 Added necessary inputs to `bReadEBSP` (see below).
 
