@@ -10,7 +10,7 @@ Added new input user mode (hdf5).
 
 #### gen/nReadHDF5.m
 
-Same purpose as `gen/bReadHDF5`, only no `MapData` are read from the HDF5 file and `MicroscopeData` are read from a plain text file. Assumes the HDF5 file is exported from HyperSpy.
+Same purpose as `gen/bReadHDF5`, only no `MapData` are read from the HDF5 file and `MicroscopeData` are read from a plain text file. Assumes the HDF5 file is exported from HyperSpy or from Matlab (see my other repository [nordif2hdf5](https://github.com/hwagit/nordif2hdf5)).
 
 #### gen/readSettings.m
 
