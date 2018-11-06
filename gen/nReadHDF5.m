@@ -63,12 +63,19 @@ for i=1:MicroscopeData.NROWS
     j = stop;
 end
 
-% Read HDF5 info
-HDF5_info = h5info(fullfile(InputUser.HDF5_folder,InputUser.EBSD_File),...
-    '/Experiments');
+% Read HDF5 info (check if HDF5 file is created from HyperSpy or Matlab)
+HDF5_info = h5info(fullfile(InputUser.HDF5_folder,InputUser.EBSD_File));
+if isempty(HDF5_info.Groups) % Used Matlab
+    EBSD_DataInfo.PatternFile = [HDF5_info.Name '/data'];
+elseif strcmp(HDF5_info.Groups.Name,'/Experiments') % Used HyperSpy
+    HDF5_info = h5info(fullfile(InputUser.HDF5_folder,InputUser.EBSD_File),...
+        '/Experiments');
+    EBSD_DataInfo.PatternFile = [HDF5_info.Groups.Name '/data'];
+else
+    error(['The HDF5 file does not have the expected format.']);
+end
 
 % Set up the EBSP reader
-EBSD_DataInfo.PatternFile = [HDF5_info.Groups.Name '/data'];
 EBSD_DataInfo.PW = double(MicroscopeData.PatternWidth);
 EBSD_DataInfo.PH = double(MicroscopeData.PatternHeight);
 EBSD_DataInfo.HDF5_loc = fullfile(InputUser.PatternLoc,InputUser.EBSD_File);
