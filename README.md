@@ -44,7 +44,7 @@ Added necessary inputs to `bReadEBSP` (see below).
 
 #### gen/bReadEBSP.m
 
-Added functionality for reading patterns from an HDF5 file of shape as mentioned above (from HyperSpy). The script then needs to check the mode (needs `InputUser` structure) and the get the pattern's location in the grid (needs `Data_InputMap`). Because of this, I have had to send these in wherever this function is called.
+Added functionality for reading patterns from an HDF5 file of shape as mentioned above (from HyperSpy or Matlab). The script then needs to check the mode (needs `InputUser` structure) and the get the pattern's location in the grid (needs `Data_InputMap`). Because of this, I have had to send these in wherever this function is called.
 
 #### start_AstroEBSD.m
 
