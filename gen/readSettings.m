@@ -34,17 +34,18 @@ MicroscopeData.SampleTilt = str2double(taString{1}{3});
 MicroscopeData.CameraTilt = 0;
 
 %% Acquisition settings
-aqsOccurence = regexp(text,'Acquisition settings');
-aqsRow = find(~cellfun(@isempty,aqsOccurence));
+aqsOccurence = regexp(text,'Acquisition settings'); % Find expression
+aqsRow = find(~cellfun(@isempty,aqsOccurence)); % Find line number
 
 % Aq. frame rate
 aqfrString = textscan(text{aqsRow + 1},'%s');
 MicroscopeData.AquisitionFrameRate = str2double(aqfrString{1}{3});
 
 % Pattern height and width (aq. resolution)
-aqrString = textscan(text{aqsRow + 2},'%s');
-MicroscopeData.PatternHeight = str2double(aqrString{1}{2}(1:3));
-MicroscopeData.PatternWidth = MicroscopeData.PatternHeight;
+aqrString = textscan(text{aqsRow + 2},'%s'); % Read line
+aqrString = strsplit(aqrString{1}{2},'x'); % Split relevant part of string
+MicroscopeData.PatternWidth = str2double(aqrString{1});
+MicroscopeData.PatternHeight = str2double(aqrString{2});
 
 % Aq. exposure time
 aqetString = textscan(text{aqsRow + 3},'%s');
