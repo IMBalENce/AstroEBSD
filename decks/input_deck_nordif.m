@@ -1,26 +1,27 @@
-%% Input_Deck_HDF5
-% Read HDF5 with Kikuchi diffraction patterns
+%% input_deck_nordif
+% Read Kikuchi diffraction patterns from a binary NORDIF .dat file
 %
-% Same as decks/Input_Deck_Fe, only that an arbitrary HDF5 file is read.
+% Same as decks/input_deck_hdf5, only that a binary file is read.
 %
 % Created by Håkon Wiik Ånes (hakon.w.anes@ntnu.no)
-% 2018-11-05
+% 2019-03-07
 
-clear
 home
 close all
 
 % Load key folders into the path
 Astro_FP = '/home/hakon/kode/matlab/AstroEBSD';
-data_FP = '/home/hakon/phd/data/sem/def2_cr90_325c/100s/5_500x/nordif/';
+data_FP = ['/home/hakon/phd/data/sem/def2_cr90_325c/1000s/2_200/nordif/'...
+    'astro_demo/astro_crop2_sde'];
 
 % Modes:
 % * Isolated = single file 
 % * Map_Single = single from map
 % * Map_All = full map, with area PC search
 % * Folder = blind folder
-% * hdf5 = Kikuchi diffraction patterns in arbitrary HDF5 file
-InputUser.Mode = 'hdf5';
+% * hdf5 = Kikuchi diffraction patterns in HDF5 file
+% * nordif = Kikuchi diffraction patterns from a binary NORDIF .dat file
+InputUser.Mode = 'nordif';
 
 InputUser.PatternLoc = data_FP;
 InputUser.PatternPhase = 1; % Phase number for this pattern
@@ -29,14 +30,14 @@ InputUser.PatternFlip = 1; % Flip the pattern loaded (single & folder) -
                            % 1 = UD, 2 = LR, 3 = UD + LR
 
 % X and Y positions, in beam coords - for map running
-InputUser.OnePatternPosition = [35,75];
+InputUser.OnePatternPosition = [10, 10];
 
 % Input folder - note that pwd gives the current directory
 InputUser.HDF5_folder = data_FP;
 InputUser.EBSD_folder = '';
 
 % Input filename - for map related data (ignored if isolated is selected)
-InputUser.EBSD_File = 'Pattern_crop2_bg_dyn8_eq.hdf5';
+InputUser.EBSD_File = 'Pattern_crop2_sde.dat';
 InputUser.Settings_File = 'Setting.txt';
 
 % Build the phases
@@ -44,13 +45,13 @@ InputUser.Phase_Folder = fullfile(Astro_FP,'phases');
 InputUser.Phase_Input  = {'Aluminium'};
 
 % Chose the folder for output
-InputUser.FolderOut = fullfile(data_FP,'outputs');
-InputUser.FileOut = 'astroebsd';
+InputUser.FileOut = 'astro_crop_sde';
+InputUser.FolderOut = fullfile(data_FP);
 mkdir(InputUser.FolderOut)
 
 % PC search ranges
-Settings_PCin.start = [0.42 0.26 0.51]; % Initial guess at PC
-Settings_PCin.range = [0.03 0.03 0.03]; % Range to search in
+Settings_PCin.start = [0.41, 0.24, 0.51]; % Initial guess at PC
+Settings_PCin.range = [0.05 0.05 0.05]; % Range to search in
 Settings_PCin.array = [10 10]; % Do not make this array larger than your data!
 
 % Plotting filters - for map data
@@ -92,7 +93,7 @@ Settings_Rad.num_peak = 7; % Number of peaks to search for - peaks will be
                             % rejected
 Settings_Rad.theta_search_pix = 15; % Search size in theta steps
 Settings_Rad.rho_search_per = 0.14; % Radon search in fractions
-Settings_Rad.min_peak_width = 0.005; % Seperation of the peak width, in pixels
+Settings_Rad.min_peak_width = 0.01; % Seperation of the peak width, in pixels
 
 %% Run the code
 

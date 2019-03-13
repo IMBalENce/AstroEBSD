@@ -28,6 +28,8 @@ try
         Settings_Mode = 4;
     elseif strcmpi(InputUser.Mode,'hdf5')
         Settings_Mode = 5;
+    elseif strcmpi(InputUser.Mode, 'nordif')
+        Settings_Mode = 6;
     else
         error(['The input setting mode ' InputUser.Mode ' is not supported']);
     end
@@ -39,8 +41,8 @@ try
         Settings_LUT,Phase_Num] = Phase_Builder(InputUser.Phase_Input,...
         InputUser.Phase_Folder);
    
-    %% Read microscope and map settings and prepare for reading of Kikuchi
-    % diffraction patterns from plain HDF5 file
+    %% Read microscope and map settings and prepare for reading of
+    % Kikuchi diffraction patterns from plain HDF5 file
     
     if Settings_Mode == 5
         
@@ -54,7 +56,23 @@ try
         Data_InputMap = EBSD_Map(MapData,MicroscopeData);
         
     end
+
+    %% Read microscope and map settings and prepare for reading of
+    % Kikuchi diffraction patterns from binary NORDIF .dat file
     
+    if Settings_Mode == 6
+        
+        % Print message to command window
+        pTime('NORDIF Loading', ClockStart);
+        
+        % Read and build HDF5
+        [MapData, MicroscopeData, EBSD_DataInfo] = nReadBinary(InputUser);
+        
+        % Read map and convert to area data
+        Data_InputMap = EBSD_Map(MapData, MicroscopeData);
+        
+    end
+
     %% BCF/Map loading
     
     if Settings_Mode == 3 || Settings_Mode == 4 % 3 Map_Single, 4 = Map_All
@@ -82,7 +100,7 @@ try
     end
     
     % Read single pattern from map
-    if Settings_Mode == 3 || Settings_Mode == 4  || Settings_Mode == 5
+    if ismember(Settings_Mode, [3 4 5 6])
         EBSP_One.P_num = Data_InputMap.PMap(InputUser.OnePatternPosition(2),...
             InputUser.OnePatternPosition(1)); 
         EBSP_One.PatternIn = bReadEBSP(EBSD_DataInfo,EBSP_One.P_num,...
@@ -105,7 +123,7 @@ try
     
     %% Full map functions
     
-    if Settings_Mode == 4 || Settings_Mode == 5
+    if ismember(Settings_Mode, [4 5 6])
 
         % Radon Transform for map
         pTime('Starting Radon Transforms',ClockStart);
@@ -140,7 +158,7 @@ try
     end
     
     %% Run a single pattern through
-    if ismember(Settings_Mode,[1 3 4 5])
+    if ismember(Settings_Mode,[1 3 4 5 6])
         
         [EBSP_One.PatternCor,...
             EBSP_One.PatternInfo] = EBSP_BGCor(EBSP_One.PatternIn,...
@@ -182,8 +200,7 @@ try
         elseif InputUser.PCSearch == 0 && ismember(Settings_Mode,[1 2 3])
              EBSP_One.PC = Settings_PCin.start;
              
-        elseif InputUser.PCSearch == 1 && (Settings_Mode == 4 || ...
-                Settings_Mode == 5)
+        elseif ismember(InputUser.PCSearch, [1 4 5 6])
             EBSP_One.PC(1) = PCOut.Fit_2nd.PCx_map(...
                 InputUser.OnePatternPosition(2),...
                 InputUser.OnePatternPosition(1));

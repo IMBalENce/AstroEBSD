@@ -1,7 +1,7 @@
 %% Plot some data
 %error filter
 
-if Settings_Mode == 4 || Settings_Mode == 5 %full map
+if ismember(Settings_Mode, [4 5 6])
     Plots_FilterMap=Plot_FilterGen(Data_OutputMap,Settings_PlotFilters);
     %build the scale bar
     [Plots_Scale]=Plot_SetScaleBar(Data_OutputMap);
