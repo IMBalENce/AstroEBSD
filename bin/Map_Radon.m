@@ -1,4 +1,6 @@
-function [ Peak_Centres,Peak_Quality,Peak_NBands,outputs ] = Map_Radon(AreaData,EBSPData,Settings_Cor,Settings_Rad )
+function [Peak_Centres, Peak_Quality, Peak_NBands,...
+    outputs] = Map_Radon(AreaData, EBSPData, Settings_Cor, Settings_Rad,...
+    InputUser)
 %MAP_RADON Radon transform for a map of data stored in HDF5 format
 %
 %INPUTS
@@ -25,8 +27,8 @@ Peak_Centres=zeros(Settings_Rad.max_peaks,2,AreaData.max_pats);
 Peak_NBands=zeros(AreaData.max_pats,1);
 
 parfor n=1:AreaData.max_pats
-    %read pattern & correct
-    pattern2 = bReadEBSP(EBSPData,n);
+    % Read pattern & correct
+    pattern2 = readEBSP(EBSPData, n, InputUser.Plugin);
     [ EBSP_cor] = EBSP_BGCor( pattern2,Settings_Cor );
     
     % radon convert
@@ -44,7 +46,7 @@ end
 
 %need one pattern run through this to get the output size correct for th
 %next step
-pattern2 = bReadEBSP(EBSPData,1);
+pattern2 = readEBSP(EBSPData, 1, InputUser.Plugin);
 [~,outputs ] = EBSP_BGCor( pattern2,Settings_Cor );
 
 end

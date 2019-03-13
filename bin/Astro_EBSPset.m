@@ -116,7 +116,7 @@ h_check_realbg.Units = 'normalized';
 
 %radius
 h_check_radius=uicontrol('style','checkbox','string', ...
-    'Radius','value', Settings_Cor.resize,...
+    'Radius','value', Settings_Cor.radius,...
     'position',[xstart+3*xsep ystart xwid yhig]);
 h_check_radius.Units = 'normalized';
 
@@ -335,7 +335,7 @@ movegui(f,'center')
 drawnow;
 f.Visible = 'on';
 
-uiwait(f,300);
+uiwait(f);
 %% sub functions
 
     function Update_BG(~,eventdata)

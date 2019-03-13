@@ -9,7 +9,7 @@
 try
     
     %% start the code
-    %start the clock
+    % start the clock
     ClockStart=clock;
     
     %% determine the mode
@@ -19,7 +19,6 @@ try
     %Map_Single = single from map
     %Map_All = full map, with area PC search
     %Folder = blind folder
-    
     
     if strcmpi(InputUser.Mode,'Isolated')
         Settings_Mode = 1;
@@ -34,24 +33,33 @@ try
     end
     %% Build the phase data
     pTime('Building Phases',ClockStart);
-    [ Crystal_UCell,Crystal_Family,Crystal_LUT,Settings_LUT,Phase_Num ] = Phase_Builder( InputUser.Phase_Input,InputUser.Phase_Folder );
-   
-    
+    [Crystal_UCell, Crystal_Family, Crystal_LUT, Settings_LUT,...
+        Phase_Num ] = Phase_Builder(InputUser.Phase_Input,...
+        InputUser.Phase_Folder);    
 
-    %% BCF/Map loading
-    
+    %% Map loading
     if Settings_Mode == 3 || Settings_Mode == 4 % 3 Map_Single, 4 = Map_All
-        pTime('BCF/HDF5 Loading',ClockStart);
-        % convert the file to HDF5 & read data
-        %read & build the HDF5
-        [MapData,MicroscopeData,Phase_BrukerData,EBSD_DataInfo] = BCF_HDF5( InputUser );
+        if strcmpi(InputUser.Plugin, 'nordif')
+            pTime('NORDIF Loading', ClockStart);
+            [MapData, MicroscopeData, EBSD_DataInfo] = readNordif(InputUser);
+        else % BCF/HDF5
+            pTime('BCF/HDF5 Loading',ClockStart);
+            % Convert the file to HDF5 & read data
+            % Read & build the HDF5
+            [MapData, MicroscopeData, Phase_BrukerData,...
+                EBSD_DataInfo] = BCF_HDF5(InputUser);
+        end
         
-        %read the map & convert to area data
-        [Data_InputMap] = EBSD_Map(MapData,MicroscopeData);
+        % Read the map & convert to area data
+        [Data_InputMap] = EBSD_Map(MapData, MicroscopeData);
         
-        % generate the static BG
-        pTime('Static background generation (if needed)',ClockStart);
-        [ Settings_Cor ] = EBSP_StaticBG( Settings_Cor,MicroscopeData,EBSD_DataInfo);
+        % Generate the static BG if not provided already
+        [row, col] = size(Settings_Cor.EBSP_bg);
+        if (row == 1) && (col == 1)
+            pTime('Static background generation (if needed)', ClockStart);
+            [Settings_Cor] = EBSP_StaticBG(Settings_Cor, MicroscopeData,...
+                EBSD_DataInfo, InputUser);
+        end
     end
     
     %% Single pattern function
@@ -60,21 +68,21 @@ try
         EBSP_One.PatternIn=ReadEBSDFile(InputUser.PatternLoc,InputUser.PatternFlip);
     end
     
-    if Settings_Mode == 3 || Settings_Mode == 4  %load from map
-        %load the pattern
-        EBSP_One.P_num=Data_InputMap.PMap(InputUser.OnePatternPosition(2),InputUser.OnePatternPosition(1)); 
-        EBSP_One.PatternIn=bReadEBSP(EBSD_DataInfo,EBSP_One.P_num);
+    if Settings_Mode == 3 || Settings_Mode == 4  % Load from map
+        % Load the pattern
+        EBSP_One.P_num = Data_InputMap.PMap(InputUser.OnePatternPosition(2),...
+            InputUser.OnePatternPosition(1));
+        EBSP_One.PatternIn = readEBSP(EBSD_DataInfo, EBSP_One.P_num,...
+            InputUser.Plugin);
     end
     
     %set up folder
-        if Settings_Mode ==  2
-        
+    if Settings_Mode ==  2
         pTime('Folder Listing',ClockStart);
         [pattern_list,num_patterns]=Folder_Prep(InputUser);
         n=1;
         [EBSP_One.PatternIn] = ReadEBSDFile(pattern_list{n},InputUser.PatternFlip);
-        
-        end
+    end
     
     %adjust the pattern settings in GUI 
     
@@ -87,8 +95,10 @@ try
     
     if Settings_Mode == 4
         % Radon Transform for map
-        pTime('Starting Radon Transforms',ClockStart);
-        [ Peak_Centres,Peak_Quality,Peak_NBands,EBSD_Info ] = Map_Radon( Data_InputMap,EBSD_DataInfo,Settings_Cor,Settings_Rad );
+        pTime('Starting Radon Transforms', ClockStart);
+        [ Peak_Centres, Peak_Quality, Peak_NBands,...
+            EBSD_Info] = Map_Radon(Data_InputMap, EBSD_DataInfo,...
+            Settings_Cor, Settings_Rad, InputUser);
         
         % Pattern centre search
         pTime('Starting Pattern Centre Search',ClockStart);

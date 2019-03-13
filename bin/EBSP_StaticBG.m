@@ -1,4 +1,5 @@
-function [ Settings_Cor ] = EBSP_StaticBG( Settings_Cor,MicroscopeData,EBSPData)
+function [Settings_Cor] = EBSP_StaticBG(Settings_Cor, MicroscopeData,...
+    EBSPData, InputUser)
 %EBSP_STATICBG Calculate a static background if needed
 %use as [ Settings_Cor ] = EBSP_StaticBG( Settings_Cor,MicroscopeData,EBSPData,t1 )
 %
@@ -17,12 +18,13 @@ if Settings_Cor.RealBG == 1
     if ~isfield(Settings_Cor,'EBSP_bgnum')
         Settings_Cor.EBSP_bgnum=30;
     end
-    [EBSP_bg] = EBSP_BGGen( MicroscopeData,EBSPData,Settings_Cor.EBSP_bgnum );
-    Settings_Cor.EBSP_bg=EBSP_bg;
+    [EBSP_bg] = EBSP_BGGen(MicroscopeData, EBSPData,...
+        Settings_Cor.EBSP_bgnum, InputUser);
+    Settings_Cor.EBSP_bg = EBSP_bg;
 end
 end
 
-function [ EBSP_bg ] = EBSP_BGGen( MicroscopeData,EBSPData,num_bg )
+function [EBSP_bg] = EBSP_BGGen(MicroscopeData, EBSPData, num_bg, InputUser)
 %EBSP_BGGEN Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -34,8 +36,8 @@ EBSP_stack=zeros(MicroscopeData.PatternHeight,MicroscopeData.PatternWidth,num_bg
 BG_Settings.hotpixel=1;
 BG_Settings.hot_thresh=1000;
 for n=1:num_bg
-    EBSP= bReadEBSP(EBSPData,patterns_ok(n));
-   [ EBSP_stack(:,:,n),~ ] = EBSP_BGCor( EBSP,BG_Settings );
+    EBSP = readEBSP(EBSPData, n, InputUser.Plugin);
+   [EBSP_stack(:, :, n), ~] = EBSP_BGCor(EBSP, BG_Settings);
 end
 
 EBSP_bg=sum(EBSP_stack(:,:,:),3)/num_bg;
