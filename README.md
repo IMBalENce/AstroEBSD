@@ -18,7 +18,7 @@ Same purpose as `gen/bReadHDF5`, only no `MapData` is read from the binary file 
 
 #### gen/plugins/nordif/readNordifSettings.m
 
-Reads microscope and pattern acquisition settings from Nordif's settings file, `Settings.txt` and writes it to the `MicroscopeData` structure.
+Reads microscope and pattern acquisition settings from Nordif's settings file, `Setting.txt` and writes it to the `MicroscopeData` structure.
 
 #### gen/plugins/nordif/readEBSPNordif.m
 
@@ -32,7 +32,7 @@ Changed name and lattice constants in `Austenite.pha`, otherwise used same value
 
 #### bin/Astro_EBSPset.m
 
-Uncommented line 338 (`uiwait(f,300)`), so that the radon transform etc. waits for my inputs before executing. Also fixed an error where the variable `h_check_radius` was set to `Settings_Cor.resize` instead of `Settings_Cor.radius`.
+Removed `TIMEOUT` parameter (equal to 300) in call to `uiwait`, so that the radon transform etc. waits for my inputs before executing. Also fixed an error where the variable `h_check_radius` was set to `Settings_Cor.resize` instead of `Settings_Cor.radius`.
 
 #### bin/Astro_Plot.m
 
@@ -40,13 +40,11 @@ Set the CRange for the MAE plot to take upper value as the one set by the user i
 
 #### bin/Astro_Run.m
 
-Added checks for plugin (`InputUser.Plugin`) in the `Map_All` cases. Options are `nordif` or `bcf/hdf5` (default). Also changed calls from `bReadEBSP` to `readEBSP`.
-
-Also added a check to see if a static background is to be generated from patterns or if it is already provided by the user from an image file.
+Added checks for plugin (`InputUser.Plugin`) in the `Map_All` cases. Options are `nordif` or `bcf/hdf5` (default). Changed calls from `bReadEBSP` to `readEBSP`. Added a check to see if a static background is to be generated from patterns or if it is already provided by the user from an image file.
 
 #### bin/EBSP_StaticBG.m
 
-Included `InputUser` structure in input, since `readEBSP` needs it.
+Included `InputUser` structure in input parameters, since `readEBSP` needs it.
 
 #### bin/Map_Radon.m
 

@@ -85,8 +85,8 @@ areaRow = find(~cellfun(@isempty, areaOccurence));
 % Number of columns and rows
 crString = textscan(text{areaRow + 6}, '%s');
 crStringInterest = strsplit(crString{1}{4}, 'x');
-MicroscopeData.NCOLS = str2num(crStringInterest{1});
-MicroscopeData.NROWS = str2num(crStringInterest{2});
+MicroscopeData.NROWS = str2num(crStringInterest{1});
+MicroscopeData.NCOLS = str2num(crStringInterest{2});
 
 % Number of patterns
 MicroscopeData.NPoints = MicroscopeData.NROWS * MicroscopeData.NCOLS;
